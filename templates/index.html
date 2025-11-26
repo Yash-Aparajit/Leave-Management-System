@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-3">
+  <div class="col-md-8">
+    <h3 class="mb-0">Dashboard</h3>
+    <div class="small text-muted">Quick actions for HR — local machine</div>
+  </div>
+  <div class="col-md-4 text-md-end mt-3 mt-md-0">
+    <a class="btn btn-outline-secondary me-2" href="{{ url_for('help_page') }}"><i class="bi bi-question-circle"></i> Help</a>
+    <a class="btn btn-outline-info me-2" href="{{ url_for('employees_list') }}"><i class="bi bi-people"></i> Employees</a>
+  </div>
+</div>
+
+<!-- Metrics -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-md-3">
+    <div class="metric-card">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">Active Employees</div>
+          <div class="h5 mb-0">{{ total_employees or 0 }}</div>
+        </div>
+        <div class="text-muted"><i class="bi bi-people-fill" style="font-size:1.8rem"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-md-3">
+    <div class="metric-card">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">Leaves this week</div>
+          <div class="h5 mb-0">{{ week_count or 0 }}</div>
+        </div>
+        <div class="text-muted"><i class="bi bi-calendar-week" style="font-size:1.8rem"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-md-3">
+    <div class="metric-card">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">This month</div>
+          <div class="h5 mb-0">{{ month_count or 0 }}</div>
+        </div>
+        <div class="text-muted"><i class="bi bi-calendar" style="font-size:1.8rem"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-md-3">
+    <div class="metric-card">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">This year</div>
+          <div class="h5 mb-0">{{ year_count or 0 }}</div>
+        </div>
+        <div class="text-muted"><i class="bi bi-calendar2-event" style="font-size:1.8rem"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Action buttons -->
+<div class="row action-grid mb-4">
+  <div class="col-sm-6 col-md-4">
+    <a class="btn btn-primary big-btn w-100" href="{{ url_for('add_employee') }}">
+      <i class="bi bi-person-plus" style="font-size:1.45rem"></i> Add employee
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-md-4">
+    <a class="btn btn-warning big-btn w-100" href="{{ url_for('remove_employee') }}">
+      <i class="bi bi-person-x" style="font-size:1.45rem"></i> Remove / Mark left
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-md-4">
+    <a class="btn btn-success big-btn w-100" href="{{ url_for('promote_employee') }}">
+      <i class="bi bi-arrow-up-right-circle" style="font-size:1.45rem"></i> Promote / Update
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-md-4">
+    <a class="btn btn-info big-btn w-100" href="{{ url_for('record_leave') }}">
+      <i class="bi bi-journal-plus" style="font-size:1.45rem"></i> Add leave
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-md-4">
+    <a class="btn btn-outline-primary big-btn w-100" href="{{ url_for('check_balance') }}">
+      <i class="bi bi-calculator" style="font-size:1.45rem"></i> Check balance
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-md-4">
+    <a class="btn btn-outline-secondary big-btn w-100" href="{{ url_for('history') }}">
+      <i class="bi bi-archive" style="font-size:1.45rem"></i> Records / History
+    </a>
+  </div>
+</div>
+
+<!-- Quick employees preview (optional; helpful for HR) -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card card-small p-3">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <div><strong>Recent employees (preview)</strong></div>
+        <div><a href="{{ url_for('employees_list') }}" class="small">See all</a></div>
+      </div>
+
+      {% if employees %}
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead class="table-light">
+              <tr>
+                <th>EMP ID</th>
+                <th>Name</th>
+                <th>Balance</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in employees %}
+                <tr>
+                  <td>{{ e.employee_id }}</td>
+                  <td>{{ e.first_name }} {{ e.middle_name or '' }} {{ e.last_name }}</td>
+                  <td>{{ balances.get(e.id, 0) }}</td>
+                  <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('employee_detail', emp_id=e.id) }}">Open</a>
+                    {% if session.get('role') in ('developer','admin_master') %}
+                      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('edit_employee', emp_id=e.id) }}">Edit</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-muted">No recent employees to show.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

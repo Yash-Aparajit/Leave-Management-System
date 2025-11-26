@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Record leave{% endblock %}
+
+{% block content %}
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('index') }}"><i class="bi bi-arrow-left"></i> Back</a>
+
+<div class="card p-4">
+  <h4>Record new leave</h4>
+  <p class="text-muted">Use this form to record a leave for an employee. If paid leave is within the 6-month block it will require override by admin_master or developer.</p>
+
+  <form method="post">
+    <div class="mb-3">
+      <label class="form-label">Employee ID</label>
+      <input name="employee_code" class="form-control" placeholder="e.g. EMP-001" required>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Date from</label>
+        <input name="date_from" type="date" class="form-control" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Date to</label>
+        <input name="date_to" type="date" class="form-control" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Days</label>
+        <input name="days" type="number" step="0.5" class="form-control" required>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Leave type</label>
+      <select name="leave_type_id" class="form-select">
+        {% for lt in leave_types %}
+          <option value="{{ lt.id }}">{{ lt.name }}{% if lt.is_paid %} (paid){% endif %}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Reason (optional)</label>
+      <textarea name="reason" class="form-control" rows="2"></textarea>
+    </div>
+
+    <!-- NEW: Approver field -->
+    <div class="mb-3">
+      <label class="form-label">Approved by (Approver)</label>
+      <input name="approver" class="form-control" placeholder="Type the approver name, e.g. Plant Head" />
+      <div class="small text-muted mt-1">This name will appear in the CSV export and in history notes.</div>
+    </div>
+
+    <button class="btn btn-success">Record leave</button>
+  </form>
+</div>
+{% endblock %}

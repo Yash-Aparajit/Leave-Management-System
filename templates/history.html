@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block content %}
+<a class='btn btn-outline-secondary back-btn' href='{{ url_for("index") }}'><i class='bi bi-arrow-left'></i> Back</a>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>History (Transactions)</h3>
+  <div>
+    <a class="btn btn-outline-success me-2" href="{{ url_for('export_history') }}"><i class="bi bi-download"></i> Download CSV</a>
+    <!-- optional: a small filter area could go here later -->
+  </div>
+</div>
+
+<div class="card card-shadow">
+  <div class="table-responsive">
+    <table class="table table-hover table-sm mb-0">
+      <thead class="table-light">
+        <tr>
+          <th style="width:140px">Date</th>
+          <th style="width:110px">EMP ID</th>
+          <th>Employee Name</th>
+          <th style="width:140px">Type</th>
+          <th style="width:120px">Days / Amount</th>
+          <th style="width:140px">Performed by</th>
+          <th style="width:130px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in transactions %}
+        <tr>
+          <td>{{ t.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ employees_map[t.employee_id].employee_id if t.employee_id in employees_map else t.employee_id }}</td>
+          <td>
+            {% if t.employee_id in employees_map %}
+              {{ employees_map[t.employee_id].first_name }} {{ employees_map[t.employee_id].last_name }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>{{ t.type }}</td>
+          <td>{{ t.amount }}</td>
+          <td>
+            {% if t.created_by and users_map.get(t.created_by) %}
+              {{ users_map[t.created_by] }}
+            {% else %}
+              System
+            {% endif %}
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary zoom-btn" 
+              data-bs-toggle="modal" data-bs-target="#zoomModal"
+              data-date="{{ t.created_at.strftime('%Y-%m-%d %H:%M') }}"
+              data-empid="{{ employees_map[t.employee_id].employee_id if t.employee_id in employees_map else '' }}"
+              data-empname="{{ (employees_map[t.employee_id].first_name + ' ' + employees_map[t.employee_id].last_name) if t.employee_id in employees_map else '' }}"
+              data-type="{{ t.type }}"
+              data-amount="{{ t.amount }}"
+              data-note="{{ t.note|e }}"
+              data-performed="{{ users_map.get(t.created_by,'System') }}"
+            >
+              <i class="bi bi-zoom-in"></i> Zoom
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-muted">No transactions found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Zoom modal -->
+<div class="modal fade" id="zoomModal" tabindex="-1" aria-labelledby="zoomModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="zoomModalLabel">Transaction details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <dl class="row">
+          <dt class="col-sm-3">Date</dt><dd class="col-sm-9" id="z-date"></dd>
+          <dt class="col-sm-3">EMP ID</dt><dd class="col-sm-9" id="z-empid"></dd>
+          <dt class="col-sm-3">Employee</dt><dd class="col-sm-9" id="z-empname"></dd>
+          <dt class="col-sm-3">Type</dt><dd class="col-sm-9" id="z-type"></dd>
+          <dt class="col-sm-3">Days / Amount</dt><dd class="col-sm-9" id="z-amount"></dd>
+          <dt class="col-sm-3">Performed by</dt><dd class="col-sm-9" id="z-performed"></dd>
+          <dt class="col-sm-3">Note</dt><dd class="col-sm-9" id="z-note"></dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-success" id="modal-download-csv" href="#"><i class="bi bi-download"></i> Download row as CSV</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Populate modal from data attributes when Zoom button clicked
+  document.addEventListener('DOMContentLoaded', function(){
+    var zoomButtons = document.querySelectorAll('.zoom-btn');
+    zoomButtons.forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        var date = btn.getAttribute('data-date') || '';
+        var empid = btn.getAttribute('data-empid') || '';
+        var empname = btn.getAttribute('data-empname') || '';
+        var type = btn.getAttribute('data-type') || '';
+        var amount = btn.getAttribute('data-amount') || '';
+        var note = btn.getAttribute('data-note') || '';
+        var performed = btn.getAttribute('data-performed') || '';
+        document.getElementById('z-date').innerText = date;
+        document.getElementById('z-empid').innerText = empid;
+        document.getElementById('z-empname').innerText = empname;
+        document.getElementById('z-type').innerText = type;
+        document.getElementById('z-amount').innerText = amount;
+        document.getElementById('z-performed').innerText = performed;
+        document.getElementById('z-note').innerText = note;
+        // prepare CSV download for this single row
+        var csv = 'Date,EMP ID,Employee,Type,Amount,Performed by,Note\\n';
+        csv += '"' + date + '","' + empid + '","' + empname + '","' + type + '","' + amount + '","' + performed + '","' + note.replace(/"/g,'""') + '"\\n';
+        var blob = new Blob([csv], { type: 'text/csv' });
+        var url = URL.createObjectURL(blob);
+        var dl = document.getElementById('modal-download-csv');
+        dl.href = url;
+        dl.setAttribute('download', (empid?empid:'transaction') + '_row.csv');
+      });
+    });
+  });
+</script>
+
+{% endblock %}

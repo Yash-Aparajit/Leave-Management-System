@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<a class='btn btn-outline-secondary back-btn' href='{{ url_for("index") }}'>
+  <i class='bi bi-arrow-left'></i> Back
+</a>
+
+<div class="container mt-4">
+  <h3>Restore Database</h3>
+  <p class="text-muted">
+    Only users with <strong>developer</strong> or <strong>admin_master</strong> role can restore the database.
+    Upload a previously created <code>.db</code> file (a backup). The app will automatically create a pre-restore backup of the current database.
+  </p>
+
+  <div class="card p-3 mt-3">
+    <form method="post" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="db_file" class="form-label">Select .db file to restore</label>
+        <input class="form-control" type="file" id="db_file" name="db_file" accept=".db" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Important</label>
+        <ul>
+          <li>A pre-restore backup will be created under the <code>backups/</code> folder before replacing the live DB.</li>
+          <li>After a successful restore you should <strong>restart the application</strong> for a clean state.</li>
+        </ul>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">Upload & Restore</button>
+        <a class="btn btn-secondary" href="{{ url_for('backup') }}">Download Latest Backup</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

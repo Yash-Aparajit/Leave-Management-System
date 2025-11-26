@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<a class='btn btn-outline-secondary back-btn' href='{{ url_for("index") }}'><i class='bi bi-arrow-left'></i> Back</a>
+<h3>Help — Quick Guide</h3>
+<p>System Version: <strong>{{ system_version }}</strong> | Build date: <strong>{{ build_date }}</strong></p>
+
+<h5>Common tasks</h5>
+<ul>
+  <li><strong>Add Employee</strong> — create a new employee record.</li>
+  <li><strong>Record Leave</strong> — mark paid or unpaid leaves. Paid leave within first 6 months will be blocked unless Admin override is used.</li>
+  <li><strong>Check Balance</strong> — view an employee's accrued and used leaves; export CSV or print the report.</li>
+  <li><strong>History</strong> — view transactions (use filters to narrow by date / employee / type).</li>
+</ul>
+{% endblock %}

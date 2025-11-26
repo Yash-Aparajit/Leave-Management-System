@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Month Report{% endblock %}
+
+{% block content %}
+<a class='btn btn-outline-secondary back-btn' href='{{ url_for("index") }}'><i class='bi bi-arrow-left'></i> Home</a>
+
+<div class="card p-3 mt-3">
+  <h4>Month-end Report</h4>
+  <form method="get" action="{{ url_for('export_month_report') }}" class="row g-2 mt-2">
+    <div class="col-auto">
+      <label class="form-label small">Year</label>
+      <input type="number" name="year" min="2000" max="2100" class="form-control" value="{{ request.args.get('year', '') }}">
+    </div>
+    <div class="col-auto">
+      <label class="form-label small">Month (1-12)</label>
+      <input type="number" name="month" min="1" max="12" class="form-control" value="{{ request.args.get('month', '') }}">
+    </div>
+    <div class="col-auto align-self-end">
+      <button class="btn btn-primary">Export Excel</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

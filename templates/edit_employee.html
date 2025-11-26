@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Edit employee {{ e.employee_id }}{% endblock %}
+
+{% block content %}
+<a class='btn btn-outline-secondary back-btn' href='{{ url_for("index") }}'><i class='bi bi-arrow-left'></i> Back</a>
+
+<div class="card p-4 mt-3">
+  <h4>Edit employee</h4>
+  <form method="post" class="mt-3">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Employee ID</label>
+        <input name="employee_id" class="form-control" value="{{ e.employee_id }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">First name</label>
+        <input name="first_name" class="form-control" value="{{ e.first_name }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Middle name</label>
+        <input name="middle_name" class="form-control" value="{{ e.middle_name or '' }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Last name</label>
+        <input name="last_name" class="form-control" value="{{ e.last_name }}" required>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Hire date</label>
+        <input type="date" name="hire_date" class="form-control" value="{{ e.hire_date|nice_date }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Promotion date</label>
+        <input type="date" name="promotion_date" class="form-control" value="{{ e.promotion_date|nice_date }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Accrual rate (per month)</label>
+        <input name="accrual_rate" class="form-control" value="{{ e.accrual_rate }}">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          <option value="active" {% if e.status == 'active' %}selected{% endif %}>Active</option>
+          <option value="left" {% if e.status == 'left' %}selected{% endif %}>Left</option>
+        </select>
+      </div>
+
+      <hr class="my-3"/>
+
+      <div class="col-md-4">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-select">
+          <option value="">-- choose department --</option>
+          {% for d in departments %}
+            <option value="{{ d }}" {% if e.department == d %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Designation</label>
+        <input name="designation" class="form-control" value="{{ e.designation or '' }}">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Contact number</label>
+        <input name="contact_number" class="form-control" value="{{ e.contact_number or '' }}">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Emergency number</label>
+        <input name="emergency_number" class="form-control" value="{{ e.emergency_number or '' }}">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Manual balance (override)</label>
+        <input name="manual_balance" class="form-control" placeholder="Leave blank to clear override" value="{{ e.manual_balance if e.manual_balance is not none else '' }}">
+        <div class="form-text">Only master admin / developer can set this. Enter a number (e.g. 12.5) or leave blank.</div>
+      </div>
+
+    </div>
+
+    <div class="mt-4">
+      <button class="btn btn-primary">Save changes</button>
+      <a class="btn btn-secondary ms-2" href="{{ url_for('employee_detail', emp_id=e.id) }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

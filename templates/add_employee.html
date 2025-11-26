@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Add employee{% endblock %}
+
+{% block content %}
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('index') }}"><i class="bi bi-arrow-left"></i> Back</a>
+
+<div class="card p-4">
+  <h4>Add employee</h4>
+  <form method="post">
+    <div class="mb-3">
+      <label class="form-label">Employee ID</label>
+      <input name="employee_id" class="form-control" required>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">First name</label>
+        <input name="first_name" class="form-control" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Middle name (optional)</label>
+        <input name="middle_name" class="form-control">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Last name</label>
+        <input name="last_name" class="form-control" required>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Hire date</label>
+        <input name="hire_date" type="date" class="form-control" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Accrual rate (leaves per month)</label>
+        <input name="accrual_rate" type="number" step="0.1" value="1.5" class="form-control" required>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-select">
+          <option value="">Select department</option>
+          <option>Purchase</option>
+          <option>ME</option>
+          <option>HR Admin</option>
+          <option>Production</option>
+          <option>Quality</option>
+          <option>Store</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Designation</label>
+        <input name="designation" class="form-control" placeholder="e.g. Supervisor, Engineer">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Contact number</label>
+        <input name="contact_number" class="form-control" placeholder="+91-...">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Emergency number</label>
+        <input name="emergency_number" class="form-control" placeholder="+91-...">
+      </div>
+    </div>
+
+    <button class="btn btn-primary">Save</button>
+  </form>
+</div>
+{% endblock %}

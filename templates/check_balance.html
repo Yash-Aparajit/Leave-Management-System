@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<a class='btn btn-outline-secondary back-btn' href='{{ url_for('index') }}'><i class='bi bi-arrow-left'></i> Back</a>
+<h3>Check Balance</h3>
+<form method='post'>
+  <div class='mb-3'><label class='form-label'>Employee ID</label><input class='form-control' name='employee_id' required></div>
+  <button class='btn btn-primary big-btn'>Check</button>
+</form>
+{% endblock %}
