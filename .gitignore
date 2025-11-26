@@ -205,3 +205,54 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# -------------------------
+# Python Bytecode & Cache
+# -------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+
+# -------------------------
+# Virtual Environment
+# -------------------------
+venv/
+env/
+
+# -------------------------
+# Environment Variables / Secrets
+# -------------------------
+.env
+*.env
+
+# -------------------------
+# SQLite Database
+# -------------------------
+*.db
+instance/
+instance/*
+
+# -------------------------
+# Log Files
+# -------------------------
+*.log
+
+# -------------------------
+# Operating System Files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Editor / IDE Files
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -------------------------
+# Flask Specific
+# -------------------------
+flask_session/
+
