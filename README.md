@@ -47,13 +47,11 @@ leave-management-system/
 │
 ├── app.py                # Main Flask application
 ├── models.py             # SQLAlchemy models (User, Leave, LeaveType, etc.)
-├── config.py             # Configuration (DB URI, debug settings, etc.)
 ├── init_db.py            # Script to initialize / reset the database
 │
 ├── requirements.txt      # Python dependencies
 ├── README.md             # Project documentation (this file)
 ├── .gitignore            # Files/folders to ignore in Git
-├── .env.example          # Example environment variables
 │
 ├── templates/            # HTML templates (Jinja2)
 │   ├── base.html
@@ -64,13 +62,4 @@ leave-management-system/
 │   ├── leave_list.html
 │   ├── leave_detail.html
 │   └── ...
-│
-├── static/
-│   ├── css/
-│   │   └── styles.css    # Custom styles
-│   ├── js/
-│   │   └── main.js       
-│   └── img/              
-│
-└── instance/
-    └── app.db            
+          
