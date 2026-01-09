@@ -118,3 +118,25 @@ Leave-Management-System/
 ├── backups/               # DB backups (ignored)
 ├── uploads/               # Runtime uploads (ignored)
 ├── venv/                  # Virtual environment (ignored)
+
+---
+
+### 🚀 Setup (Local)
+
+##1️⃣ Create virtual environment
+python -m venv venv
+
+##2️⃣ Activate environment
+Windows
+venv\Scripts\activate
+
+##3️⃣ Install dependencies
+pip install -r requirements.txt
+
+##4️⃣ Run application
+python app.py
+
+##Open browser:
+http://127.0.0.1:5000
+
+---
