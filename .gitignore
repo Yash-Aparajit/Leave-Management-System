@@ -207,13 +207,6 @@ marimo/_lsp/
 __marimo__/
 
 # -------------------------
-# Python Bytecode & Cache
-# -------------------------
-__pycache__/
-*.py[cod]
-*.pyo
-
-# -------------------------
 # Virtual Environment
 # -------------------------
 venv/
@@ -255,4 +248,49 @@ Thumbs.db
 # Flask Specific
 # -------------------------
 flask_session/
+
+# =========================
+# Python cache / bytecode
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# =========================
+# Virtual environment
+# =========================
+venv/
+.env/
+.venv/
+
+# =========================
+# Database & runtime data
+# =========================
+app.db
+*.db
+backups/
+uploads/
+
+# =========================
+# Logs & temp files
+# =========================
+*.log
+*.tmp
+*.bak
+
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Excel temp files
+# =========================
+~$*.xlsx
 
