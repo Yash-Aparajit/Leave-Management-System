@@ -1,65 +1,120 @@
-# 🧾 Leave Management System (Flask + SQLite)
+# 🧾 Leave & Attendance Management System
 
-A full-stack **Leave Management System** built with **Flask and SQLAlchemy** that handles employee leave requests, approvals, balances, and basic analytics.  
+An **internal HR Leave & Attendance Management System** built with **Flask + SQLAlchemy**, designed for **offline plant-level HR operations**.
 
-The goal of this project is to simulate a **real-world HR leave workflow** with clean backend logic and a usable web interface.
+This system replaces Excel-based workflows with a **ledger-driven, auditable architecture** where all balances are calculated from transactions instead of stored values.
 
 ---
 
-## ✨ Features
+## 📌 Purpose
 
-- 📝 **Leave Requests Workflow**  
-  - Create leave requests with dates, reason, and leave type.  
-  - Status flow: `Pending → Approved / Rejected`.  
-  - Automatic leave balance deduction on approval.
+- Centralize employee leave & attendance records
+- Enforce HR policies via system rules (not manual discipline)
+- Maintain a complete audit trail
+- Operate fully offline on local machines
 
-- 📊 **Leave Balances & Types**  
-  - Different leave types (e.g., Casual, Sick, Earned).  
-  - Track remaining balance per user.  
-  - Prevent overbooking or negative balance.
+---
 
-- ✅ **Validation & Rules**  
-  - Prevent overlapping leave requests.  
-  - Validate date ranges and allowed durations.  
-  - Basic rule-based checks for policy-style constraints.
+## ✨ Key Features
 
-- 📈 **Basic Analytics (Optional / If Implemented)**  
-  - View leaves by status, type, or user.  
-  - Simple HR-style overview of upcoming leaves.
+### 👤 Employee Management
+- Add / edit employees
+- Department, designation, plant tracking
+- Hire date & promotion handling
+- Employee exit (left) locking
+
+---
+
+### 📝 Leave Management
+- Paid & unpaid leave
+- Planned / Unplanned / Sick classification
+- Approver tracking
+- Recorder (who entered the data) tracking
+- Edit leave → **Developer only**
+- Delete leave with full audit record
+
+---
+
+### 📊 Ledger-Based Leave Balance
+- Monthly automatic accruals
+- Leave deductions as transactions
+- Promotion-based recalculation
+- Manual balance correction via **delta override**
+- Balance always computed from ledger
+
+---
+
+### 🕒 Attendance Modules
+- Comp-Off
+- Early / Late coming
+- Outdoor Duty (Full / Half day)
+
+Each module:
+- Blocks left employees
+- Tracks approvals
+- Supports Excel export
+
+---
+
+### 📂 Reports & History
+- Filterable leave history
+- Monthly HR report (Excel)
+- Yearly consolidated report
+- Employee profile export (multi-sheet Excel)
+
+---
+
+### 🔐 Role-Based Access Control
+
+| Role | Access |
+|----|------|
+| admin_1 | Daily HR operations |
+| admin_master | Overrides, delete, restore |
+| developer | Full system authority |
+
+Rules enforced:
+- Only developer can edit historical leave
+- Manual balance changes are always audited
+- Left employees are locked by default
+
+---
+
+### 💾 Backup & Restore
+- SQLite database backup
+- Manual restore with pre-restore snapshot
+- Fully offline & local
 
 ---
 
 ## 🧱 Tech Stack
 
-- **Language:** Python  
-- **Framework:** Flask  
-- **ORM:** SQLAlchemy  
-- **Database:** SQLite  
-- **Frontend:** HTML, CSS, Jinja templates  
-- **Others:** `virtualenv`, `pip`, `requirements.txt`
+- **Language:** Python 3.10+
+- **Backend:** Flask
+- **ORM:** SQLAlchemy
+- **Database:** SQLite
+- **Frontend:** Jinja2, HTML, CSS, Bootstrap
+- **Exports:** openpyxl, pandas
+- **Auth:** Session-based authentication
 
 ---
 
 ## 📂 Project Structure
 
-```bash
-leave-management-system/
+```text
+Leave-Management-System/
 │
-├── app.py                # Main Flask application
-├── models.py             # SQLAlchemy models (User, Leave, LeaveType, etc.)
-├── init_db.py            # Script to initialize / reset the database
+├── app.py                 # Main application
+├── models.py              # Database models
+├── requirements.txt
+├── README.md
+├── .gitignore
 │
-├── requirements.txt      # Python dependencies
-├── README.md             # Project documentation (this file)
-├── .gitignore            # Files/folders to ignore in Git
+├── templates/             # Jinja templates
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── profile/
 │
-├── templates/            # HTML templates (Jinja2)
-│   ├── base.html
-│   ├── index.html
-│   ├── login.html
-│   ├── dashboard.html
-│   ├── leave_request_form.html
-│   ├── leave_list.html
-│   ├── leave_detail.html
-│   └── ...
-          
+├── backups/               # DB backups (ignored)
+├── uploads/               # Runtime uploads (ignored)
+├── venv/                  # Virtual environment (ignored)
