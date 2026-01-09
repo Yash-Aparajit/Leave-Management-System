@@ -118,6 +118,7 @@ Leave-Management-System/
 ├── backups/               # DB backups (ignored)
 ├── uploads/               # Runtime uploads (ignored)
 ├── venv/                  # Virtual environment (ignored)
+```text
 
 ---
 
