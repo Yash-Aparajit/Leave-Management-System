@@ -1057,6 +1057,68 @@ def restore():
 
     return render_template('restore.html')
 
+@app.route('/employees/import', methods=['GET', 'POST'])
+@login_required
+def import_employees():
+    if not has_permission('can_edit_employee') and session.get('role') not in ('developer','admin_master'):
+        flash('Import employees requires permission to edit employees', 'danger')
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        f = request.files.get('file')
+        if not f or f.filename == '':
+            flash('No file uploaded', 'danger')
+            return redirect(url_for('import_employees'))
+        # only accept xlsx
+        if not f.filename.lower().endswith('.xlsx'):
+            flash('Only .xlsx files accepted', 'danger')
+            return redirect(url_for('import_employees'))
+
+        fname = secure_filename(f.filename)
+        uid = uuid.uuid4().hex
+        dest = os.path.join(app.config['UPLOAD_FOLDER'], f'import_{uid}_{fname}')
+        f.save(dest)
+
+        rows, file_errors = parse_xlsx_file(dest)
+        if file_errors:
+            flash('File errors: ' + '; '.join(file_errors), 'danger')
+            return redirect(url_for('import_employees'))
+
+        # determine row-level status: exists in DB? mark as error unless user picks update mode (we default to reject existing)
+        to_create = []
+        to_reject = []
+        for r in rows:
+            empid = r['data']['employee_id']
+            if Employee.query.filter_by(employee_id=empid).first():
+                r['errors'].append('Employee exists in database (duplicate). Use Edit or enable update mode.')
+                to_reject.append(r)
+            elif r['errors']:
+                to_reject.append(r)
+            else:
+                to_create.append(r)
+
+        # Save parsed result to temp JSON for confirm (safe)
+        preview_token = uuid.uuid4().hex
+        preview_path = os.path.join(app.config['UPLOAD_FOLDER'], f'preview_{preview_token}.json')
+        with open(preview_path, 'w', encoding='utf-8') as fh:
+            json.dump({
+                'source_filename': fname,
+                'uploaded_path': dest,
+                'rows': rows
+            }, fh, default=str)
+
+        # render preview template
+        return render_template('import_preview.html',
+                               preview_token=preview_token,
+                               to_create=to_create,
+                               to_reject=to_reject,
+                               total=len(rows),
+                               created_count=len(to_create),
+                               rejected_count=len(to_reject))
+
+    # GET -> show upload form
+    return render_template('import_employees.html')
+
 # ---------- Run server ----------
 if __name__ == '__main__':
     with app.app_context():
