@@ -4,9 +4,9 @@ from app import app, db
 from models import User, LeaveType
 
 SEED_USERS = [
-    ("admin_1", "admin@jeena", "viewer_admin"),
-    ("admin_master", "master@jeena", "admin_master"),
-    ("developer", "dev@jeena@123", "developer"),
+    ("user_1", "password_1", "viewer_user"), #basic user rights
+    ("user_master", "password_2", "user_master"), #basic user rights + manual override 
+    ("developer", "developer_3", "developer"), #basic user rights + manual override + system monitering and log's
 ]
 
 def create():
@@ -35,3 +35,4 @@ def create():
 if __name__ == '__main__':
     create()
     print("DB created. Now run: python app.py")
+
