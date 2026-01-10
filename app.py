@@ -516,71 +516,7 @@ def edit_employee(emp_id):
 
 
 # ---------- Record / Edit / Delete leave ----------
-@app.route('/leave/record', methods=['GET','POST'])
-@login_required
-def record_leave():
-    leave_types = LeaveType.query.all()
-    if request.method == 'POST':
-        emp_code = request.form.get('employee_code','').strip()
-        emp = Employee.query.filter_by(employee_id=emp_code).first()
-        if not emp:
-            flash('Employee not found', 'danger')
-            return redirect(url_for('record_leave'))
-        try:
-            lt_id = int(request.form.get('leave_type_id'))
-            date_from = dt.strptime(request.form.get('date_from'), '%Y-%m-%d').date()
-            date_to = dt.strptime(request.form.get('date_to'), '%Y-%m-%d').date()
-            days = float(request.form.get('days'))
-        except Exception:
-            flash('Invalid leave data', 'danger')
-            return redirect(url_for('record_leave'))
-        reason = request.form.get('reason','').strip()
-        approver = request.form.get('approver','').strip()  
-        lt = LeaveType.query.get(lt_id)
 
-        six_months_after = emp.hire_date + relativedelta(months=6) if emp.hire_date else date.today()
-
-        # Paid leave within 6 months => override required
-        if lt and lt.is_paid and date_from < six_months_after:
-            if has_permission('can_override') or session.get('role') in ('developer', 'admin_master'):
-                le = LeaveEntry(employee_id=emp.id, date_from=date_from, date_to=date_to, days=days, leave_type_id=lt_id, reason=reason, created_by=session.get('user_id'))
-                try:
-                    setattr(le, 'approver', approver or None)
-                except Exception:
-                    pass
-                db.session.add(le)
-                db.session.flush()
-                note_txt = f'Leave {date_from} to {date_to}.'
-                if approver:
-                    note_txt += f' Approver: {approver}.'
-                tr = Transaction(employee_id=emp.id, type='LEAVE_TAKEN', amount=round(-abs(days),2), reference_id=le.id, note=note_txt + ' (OVERRIDDEN)', created_by=session.get('user_id'))
-                db.session.add(tr)
-                ov = Transaction(employee_id=emp.id, type='OVERRIDE', period=None, amount=0.0, reference_id=le.id, note=f'Override for paid leave within 6 months by user {session.get("username")}' + (f' — Approver: {approver}' if approver else ''), created_by=session.get('user_id'))
-                db.session.add(ov)
-                db.session.commit()
-                flash('Leave recorded with override', 'success')
-                return redirect(url_for('employee_detail', emp_id=emp.id))
-            else:
-                flash(f'Paid leave not allowed until {six_months_after}. Ask Admin with override access.', 'danger')
-                return redirect(url_for('record_leave'))
-
-        le = LeaveEntry(employee_id=emp.id, date_from=date_from, date_to=date_to, days=days, leave_type_id=lt_id, reason=reason, created_by=session.get('user_id'))
-        try:
-            setattr(le, 'approver', approver or None)
-        except Exception:
-            pass
-        db.session.add(le)
-        db.session.flush()
-        note_txt = f'Leave {date_from} to {date_to}.'
-        if approver:
-            note_txt += f' Approver: {approver}.'
-        tr = Transaction(employee_id=emp.id, type='LEAVE_TAKEN', amount=round(-abs(days),2), reference_id=le.id, note=note_txt, created_by=session.get('user_id'))
-        db.session.add(tr)
-        db.session.commit()
-        flash('Leave recorded', 'success')
-        return redirect(url_for('employee_detail', emp_id=emp.id))
-
-    return render_template('record_leave_v2.html', leave_types=leave_types)
 
 @app.route('/leave/edit/<int:leave_id>', methods=['GET','POST'])
 @login_required
