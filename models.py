@@ -120,3 +120,42 @@ class Transaction(db.Model):
     def __repr__(self):
         return f'<Transaction {self.type} {self.amount} emp={self.employee_id}>'
     
+
+from datetime import datetime, date
+
+class CompOffRecord(db.Model):
+    __tablename__ = 'comp_offs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employees.id'), nullable=False, index=True)
+    emp_code = db.Column(db.String(64), nullable=False)        # denormalized employee.employee_id
+    emp_name = db.Column(db.String(255), nullable=False)       # denormalized name snapshot
+    department = db.Column(db.String(128), nullable=True)      # denormalized department snapshot
+
+    earned_on = db.Column(db.Date, nullable=False)             # date compoff earned
+    taken_on = db.Column(db.Date, nullable=True)               # optional date compoff taken
+    approved_by = db.Column(db.String(255), nullable=True)
+    note = db.Column(db.Text, nullable=True)
+
+    created_by = db.Column(db.Integer, nullable=True)          # user id who recorded
+    created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
+
+    # optional relationship back to Employee (read-only convenience)
+    employee = db.relationship('Employee', backref=db.backref('comp_offs', lazy='dynamic'))
+
+    def to_export_row(self):
+        """Return a dict/tuple suitable for export merging with leaves."""
+        return {
+            'record_type': 'COMP_OFF',
+            'earned_on': self.earned_on.isoformat() if self.earned_on else '',
+            'taken_on': self.taken_on.isoformat() if self.taken_on else '',
+            'employee_id': self.emp_code,
+            'employee_name': self.emp_name,
+            'department': self.department or '',
+            'approved_by': self.approved_by or '',
+            'note': self.note or '',
+            'created_by': str(self.created_by or ''),
+            'created_at': self.created_at.isoformat() if self.created_at else ''
+        }
+
