@@ -198,3 +198,45 @@ class EarlyLateRecord(db.Model):
     def __repr__(self):
         return f"<EarlyLate {self.emp_code} {self.id}>"
 
+class OutdoorDuty(db.Model):
+    __tablename__ = "outdoor_duties"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    employee_id = db.Column(
+        db.Integer,
+        db.ForeignKey('employees.id'),
+        nullable=False,
+        index=True
+    )
+
+    emp_code = db.Column(db.String(64), nullable=False)
+    emp_name = db.Column(db.String(255), nullable=False)
+    department = db.Column(db.String(128), nullable=True)
+    designation = db.Column(db.String(128), nullable=True)
+
+    # OD specifics
+    od_date = db.Column(db.Date, nullable=False)
+    is_full_day = db.Column(db.Boolean, nullable=False, default=True)
+    time_from = db.Column(db.DateTime, nullable=True)
+    time_to = db.Column(db.DateTime, nullable=True)
+
+    reason = db.Column(db.String(255), nullable=True)
+    approved_by = db.Column(db.String(100), nullable=True)
+    note = db.Column(db.Text, nullable=True)
+
+    # audit
+    created_by = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=True
+    )
+
+    created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())
+    updated_at = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
+
+    employee = db.relationship('Employee', backref=db.backref('outdoor_duties', lazy='dynamic'))
+    creator = db.relationship('User')
+
+    def __repr__(self):
+        return f"<OD {self.emp_code} {self.od_date}>"
