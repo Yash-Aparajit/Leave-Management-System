@@ -203,3 +203,20 @@ def seed_defaults():
             print(f"\nUsers table has {users_count} record(s) — skipping user seeding.")
 
 
+def main():
+    print("\n=== init_db.py starting ===")
+    print(" DB path:", DB_PATH)
+
+    # Make sure DB folder exists
+    os.makedirs(os.path.dirname(DB_PATH) or ".", exist_ok=True)
+
+    ensure_tables_and_columns()
+    seed_defaults()
+
+    print("\n=== init_db.py finished ===")
+    print("If you want a fresh DB, delete 'app.db' and run this script again.")
+    print("Then start your app: python app.py")
+
+
+if __name__ == "__main__":
+    main()
