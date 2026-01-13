@@ -1,20 +1,52 @@
 {% extends 'base.html' %}
 {% block content %}
-<a class='btn btn-outline-secondary back-btn' href='{{ url_for("check_balance") }}'><i class='bi bi-arrow-left'></i> Back</a>
-<h3>{{ emp.employee_id }} — {{ emp.first_name }} {{ emp.last_name }}</h3>
-<p>Hire date: {{ emp.hire_date|nice_date }} — Accrual rate: {{ emp.accrual_rate }}</p>
-<h4>Available paid balance: <span class='badge bg-info'>{{ bal }}</span></h4>
-<div class='mt-3 mb-3'>
-  <a class='btn btn-outline-success' href='{{ url_for('export_employee', emp_code=emp.employee_id) }}'><i class='bi bi-file-earmark-arrow-down'></i> Export Employee Report (CSV)</a>
-  <a class='btn btn-outline-primary' href='{{ url_for('employee_print', emp_id=emp.id) }}'><i class="bi bi-printer"></i> Print report</a>
-</div>
+
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('check_balance') }}">
+  <i class="bi bi-arrow-left"></i> Back
+</a>
+
+<h3 class="mt-2">
+  {{ emp.employee_id }} — {{ emp.first_name }} {{ emp.last_name }}
+</h3>
+
+<p class="text-muted">
+  Hire date: {{ emp.hire_date|nice_date }}
+  &nbsp;|&nbsp;
+  Accrual rate: {{ emp.accrual_rate }}
+</p>
+
+<h4>
+  Available paid balance:
+  <span class="badge bg-info">{{ bal }}</span>
+</h4>
+
+
 <h5>Leaves</h5>
-<table class='table'><thead><tr><th>From</th><th>To</th><th>Days</th><th>Type</th></tr></thead>
-<tbody>
-{% for l in leaves %}
-<tr><td>{{ l.date_from|nice_date }}</td><td>{{ l.date_to|nice_date }}</td><td>{{ l.days }}</td><td>{{ l.leave_type_id }}</td></tr>
-{% else %}
-<tr><td colspan="4" class="text-muted">No leaves</td></tr>
-{% endfor %}
-</tbody></table>
+<table class="table table-sm table-bordered">
+  <thead class="table-light">
+    <tr>
+      <th>From</th>
+      <th>To</th>
+      <th>Days</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for l in leaves %}
+      <tr>
+        <td>{{ l.date_from|nice_date }}</td>
+        <td>{{ l.date_to|nice_date }}</td>
+        <td>{{ l.days }}</td>
+        <td>{{ l.leave_type.name if l.leave_type }}</td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="4" class="text-center text-muted">
+          No leaves recorded
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}
