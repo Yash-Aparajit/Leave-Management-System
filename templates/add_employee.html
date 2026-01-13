@@ -34,7 +34,19 @@
       </div>
     </div>
 
-         <div class="col-md-4 mb-3">
+    <!-- Hire date, accrual, plant -->
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Hire date</label>
+        <input name="hire_date" type="date" class="form-control" required>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Accrual rate (leaves per month)</label>
+        <input name="accrual_rate" type="number" step="0.1" value="1.5" class="form-control" required>
+      </div>
+
+      <div class="col-md-4 mb-3">
         <label class="form-label">Plant Location</label>
         <select name="plant_location" class="form-select">
           <option value="">-- choose plant location --</option>
@@ -67,7 +79,19 @@
       </div>
     </div>
 
-  
+    <!-- Contact + Emergency -->
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Contact number</label>
+        <input name="contact_number"
+               class="form-control"
+               pattern="[0-9]{10}"
+               maxlength="10"
+               minlength="10"
+               title="Enter exactly 10 digits"
+               placeholder="10-digit mobile number"
+               required>
+      </div>
 
       <div class="col-md-6 mb-3">
         <label class="form-label">Emergency number</label>
