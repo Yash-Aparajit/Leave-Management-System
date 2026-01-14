@@ -47,6 +47,22 @@
            class="form-control form-control-sm"
            placeholder="12">
   </div>
+
+  <div class="col-md-4 d-flex gap-2">
+    <button class="btn btn-sm btn-primary">
+      <i class="bi bi-funnel"></i> Apply
+    </button>
+
+    <a href="{{ url_for('history_early_late') }}"
+       class="btn btn-sm btn-outline-secondary">
+      Reset
+    </a>
+
+    <a href="{{ url_for('early_late_export', format='xlsx') }}"
+       class="btn btn-sm btn-outline-success">
+      <i class="bi bi-download"></i> Excel
+    </a>
+  </div>
 </form>
 
 <!-- TABLE -->
