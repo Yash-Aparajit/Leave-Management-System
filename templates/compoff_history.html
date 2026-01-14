@@ -1,0 +1,111 @@
+{% extends "history_base.html" %}
+{% block title %}Comp-Off History{% endblock %}
+
+{% block history_content %}
+
+<!-- FILTERS -->
+<form method="get" class="row g-2 align-items-end mb-3">
+
+  <div class="col-md-2">
+    <label class="form-label small">Employee ID</label>
+    <input type="text"
+           name="employee_id"
+           value="{{ filters.employee_id }}"
+           class="form-control form-control-sm"
+           placeholder="EMP001">
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label small">Department</label>
+    <select name="department" class="form-select form-select-sm">
+      <option value="">All</option>
+      {% for d in ['Purchase','ME','HR Admin','Production','Quality','Store','Other'] %}
+        <option value="{{ d }}"
+          {% if filters.department == d %}selected{% endif %}>
+          {{ d }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label small">Year</label>
+    <input type="number"
+           name="year"
+           value="{{ filters.year }}"
+           class="form-control form-control-sm"
+           placeholder="2025">
+  </div>
+
+  <div class="col-md-4 d-flex gap-2">
+    <button class="btn btn-sm btn-primary">
+      <i class="bi bi-funnel"></i> Apply
+    </button>
+
+    <a href="{{ url_for('history_compoff') }}"
+       class="btn btn-sm btn-outline-secondary">
+      Reset
+    </a>
+
+    <a href="{{ url_for('comp_off_export', format='xlsx') }}"
+       class="btn btn-sm btn-outline-success">
+      <i class="bi bi-download"></i> Excel
+    </a>
+  </div>
+</form>
+
+<!-- TABLE -->
+<div class="card card-shadow">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Date Earned</th>
+          <th>EMP ID</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Taken On</th>
+          <th>Approved By</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for r in items %}
+        <tr>
+          <td>
+            {{ r.earned_on.strftime('%d/%m/%Y') if r.earned_on else '' }}
+          </td>
+
+          <td>{{ r.emp_code }}</td>
+
+          <td>{{ r.emp_name }}</td>
+
+          <td>{{ r.department or '-' }}</td>
+
+          <td>
+            {% if r.taken_on %}
+              {{ r.taken_on.strftime('%d/%m/%Y') }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+
+          <td>{{ r.approved_by or '-' }}</td>
+
+          <td class="text-muted">{{ r.note or '' }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" class="text-center text-muted py-3">
+            No comp-off records found
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+</div>
+
+{% endblock %}
