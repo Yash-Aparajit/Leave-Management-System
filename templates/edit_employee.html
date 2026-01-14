@@ -49,6 +49,16 @@
       <hr class="my-3"/>
 
       <div class="col-md-4">
+        <label class="form-label">Plant Location</label>
+        <select name="plant_location" class="form-select">
+          <option value="">-- choose plant location --</option>
+          <option value="BAL" {% if e.plant_location == 'BAL' %}selected{% endif %}>BAL</option>
+          <option value="SKODA" {% if e.plant_location == 'SKODA' %}selected{% endif %}>SKODA</option>
+          <option value="Mercedes_Benze" {% if e.plant_location == 'Mercedes_Benz' %}selected{% endif %}>Mercedes_Benze</option>
+        </select>
+      </div>
+      
+      <div class="col-md-4">
         <label class="form-label">Department</label>
         <select name="department" class="form-select">
           <option value="">-- choose department --</option>
@@ -65,12 +75,26 @@
 
       <div class="col-md-4">
         <label class="form-label">Contact number</label>
-        <input name="contact_number" class="form-control" value="{{ e.contact_number or '' }}">
+        <input name="contact_number"
+               class="form-control"
+               value="{{ e.contact_number or '' }}"
+               pattern="[0-9]{10}"
+               maxlength="10"
+               minlength="10"
+               title="Enter exactly 10 digits"
+               placeholder="10-digit mobile number"
+               required>
       </div>
 
       <div class="col-md-4">
         <label class="form-label">Emergency number</label>
-        <input name="emergency_number" class="form-control" value="{{ e.emergency_number or '' }}">
+        <input name="emergency_number"
+               class="form-control"
+               value="{{ e.emergency_number or '' }}"
+               pattern="[0-9]{10}"
+               maxlength="10"
+               minlength="10"
+               placeholder="10-digit emergency number">
       </div>
 
       <div class="col-md-4">
