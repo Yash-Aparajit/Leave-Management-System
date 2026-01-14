@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Comp-Off History{% endblock %}
+
+{% block content %}
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('index') }}"><i class="bi bi-arrow-left"></i> Back</a>
+
+<div class="card p-3 mt-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h4>Comp-Off History</h4>
+    <div>
+      <a class="btn btn-success" href="{{ url_for('comp_off_export', format='xlsx') }}">Export Excel</a>
+      <a class="btn btn-outline-secondary ms-2" href="{{ url_for('comp_off_new') }}">New Comp-Off</a>
+    </div>
+  </div>
+
+  <form method="get" class="row g-2 mt-2">
+    <div class="col-auto"><input name="employee_id" class="form-control form-control-sm" placeholder="Employee ID" value="{{ q_emp }}"></div>
+    <div class="col-auto"><input name="department" class="form-control form-control-sm" placeholder="Department" value="{{ q_dept }}"></div>
+    <div class="col-auto"><input name="year" type="number" class="form-control form-control-sm" placeholder="Year" value="{{ q_year }}"></div>
+    <div class="col-auto"><input name="month" type="number" min="1" max="12" class="form-control form-control-sm" placeholder="Month" value="{{ q_month }}"></div>
+    <div class="col-auto"><button class="btn btn-primary btn-sm">Filter</button></div>
+  </form>
+
+  <div class="table-responsive mt-3">
+    <table class="table table-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Earned On</th><th>Taken On</th><th>EMP ID</th><th>Name</th><th>Department</th><th>Approved By</th><th>Note</th><th>Recorded By</th><th>Recorded At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in compoffs %}
+          <tr>
+            <td>{{ c.earned_on|nice_date }}</td>
+            <td>{{ c.taken_on|nice_date }}</td>
+            <td>{{ c.emp_code }}</td>
+            <td>{{ c.emp_name }}</td>
+            <td>{{ c.department or '' }}</td>
+            <td>{{ c.approved_by or '' }}</td>
+            <td>{{ c.note or '' }}</td>
+            <td>{{ c.created_by or '' }}</td>
+            <td>{{ c.created_at|nice_date }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="9" class="text-muted">No comp-off records found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if pagination %}
+    <nav aria-label="pagination" class="mt-2">
+      <ul class="pagination pagination-sm">
+        {% if pagination.page > 1 %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('comp_off_list', page=pagination.page-1) }}">Prev</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ pagination.page }}</span></li>
+        {% if pagination.has_next %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('comp_off_list', page=pagination.page+1) }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+
+</div>
+{% endblock %}
