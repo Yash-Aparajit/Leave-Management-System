@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Record Comp-Off{% endblock %}
+
+{% block content %}
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('comp_off_list') }}"><i class="bi bi-arrow-left"></i> Back</a>
+
+<div class="card p-4 mt-3">
+  <h4 class="mb-3">Record Comp-Off (Earned / Taken)</h4>
+
+  <form method="post" class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Employee ID</label>
+      <input name="employee_id" class="form-control" placeholder="EMP-001" required>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Earned on</label>
+      <input name="earned_on" type="date" class="form-control" required>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Taken on (optional)</label>
+      <input name="taken_on" type="date" class="form-control">
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Approved by</label>
+      <input name="approved_by" class="form-control" placeholder="Approver name">
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Note</label>
+      <textarea name="note" class="form-control" rows="3" placeholder="Optional note"></textarea>
+    </div>
+
+    <div class="col-12">
+      <button class="btn btn-primary">Save comp-off</button>
+      <a class="btn btn-outline-secondary ms-2" href="{{ url_for('comp_off_list') }}">Cancel</a>
+    </div>
+  </form>
+
+  <div class="mt-3 small text-muted">
+    Comp-Off entries are for record only and do not change leave balances.
+  </div>
+</div>
+{% endblock %}
