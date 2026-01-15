@@ -11,7 +11,7 @@
 
   <div class="mb-3">
     <strong>{{ emp.employee_id }}</strong> —
-    {{ emp.first_name }} {{ emp.last_name }}
+    {{ emp.first_name }} {{ emp.middle_name or '' }} {{ emp.last_name }}
     {% if emp.department %}<span class="text-muted">({{ emp.department }})</span>{% endif %}
   </div>
 
@@ -35,6 +35,7 @@
         <option value="">-- Select (optional) --</option>
         <option value="Planned" {% if le.situation == 'Planned' %}selected{% endif %}>Planned</option>
         <option value="Unplanned" {% if le.situation == 'Unplanned' %}selected{% endif %}>Unplanned</option>
+        <option value="Sick" {% if le.situation == 'Sick' %}selected{% endif %}>Sick</option>
       </select>
     </div>
 
@@ -67,6 +68,9 @@
       <button class="btn btn-primary" type="submit">
         <i class="bi bi-save"></i> Save changes
       </button>
+      <a class="btn btn-secondary ms-2" href="{{ url_for('employee_detail', emp_id=emp.id) }}">
+        Cancel
+      </a>
     </div>
   </form>
 </div>
