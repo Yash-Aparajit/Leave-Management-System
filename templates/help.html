@@ -1,14 +1,134 @@
 {% extends 'base.html' %}
-{% block content %}
-<a class='btn btn-outline-secondary back-btn' href='{{ url_for("index") }}'><i class='bi bi-arrow-left'></i> Back</a>
-<h3>Help — Quick Guide</h3>
-<p>System Version: <strong>{{ system_version }}</strong> | Build date: <strong>{{ build_date }}</strong></p>
+{% block title %}Help & System Guide{% endblock %}
 
-<h5>Common tasks</h5>
-<ul>
-  <li><strong>Add Employee</strong> — create a new employee record.</li>
-  <li><strong>Record Leave</strong> — mark paid or unpaid leaves. Paid leave within first 6 months will be blocked unless Admin override is used.</li>
-  <li><strong>Check Balance</strong> — view an employee's accrued and used leaves; export CSV or print the report.</li>
-  <li><strong>History</strong> — view transactions (use filters to narrow by date / employee / type).</li>
-</ul>
+{% block content %}
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('index') }}">
+  <i class="bi bi-arrow-left"></i> Back
+</a>
+
+<div class="card p-4 mt-3">
+  <h3 class="mb-1">Help & System Guide</h3>
+  <div class="small text-muted mb-3">
+    System Version: <strong>{{ system_version }}</strong> |
+    Build Date: <strong>{{ build_date }}</strong>
+  </div>
+
+  <hr>
+
+  <!-- SYSTEM BASICS -->
+  <h5>1. System Basics</h5>
+  <ul>
+    <li>This system tracks <strong>Leaves, Comp-Off, Early/Late, and Outdoor Duty (OD)</strong>.</li>
+    <li>All records are date-driven and appear automatically in <strong>History</strong> and <strong>Reports</strong>.</li>
+    <li>Balances are calculated from <strong>Transactions</strong>, not directly edited.</li>
+  </ul>
+
+  <hr>
+
+  <!-- LEAVES -->
+  <h5>2. Leave Rules (Important)</h5>
+  <ul>
+    <li><strong>Paid Leave</strong> deducts balance. <strong>Unpaid Leave</strong> does not.</li>
+    <li>Balance <strong>can go negative</strong> if leave exceeds available balance.</li>
+    <li>Monthly accrual is added automatically and can recover negative balance.</li>
+    <li>Once recorded, leave entries are <strong>read-only for Admins</strong>.</li>
+    <li><strong>Only Developer</strong> can edit an existing leave record.</li>
+  </ul>
+
+  <div class="alert alert-warning">
+    If a leave looks wrong, do NOT try to “fix” it by adding another leave.
+    Contact the Developer for correction.
+  </div>
+
+  <hr>
+
+  <hr>
+
+  <!-- OUTDOOR DUTY -->
+  <h5>5. Outdoor Duty (OD)</h5>
+  <ul>
+    <li>OD can be full-day or time-based.</li>
+    <li>Only the <strong>Approved By</strong> field is tracked.</li>
+    <li>OD appears in History and Reports automatically.</li>
+  </ul>
+
+  <hr>
+
+  <!-- REPORTS -->
+  <h5>6. Reports & Exports</h5>
+  <ul>
+    <li><strong>Monthly Reports</strong> export data for one month (Leaves, Comp-Off, Early/Late, OD).</li>
+    <li><strong>Yearly Reports</strong> export all four sections in <strong>separate Excel sheets</strong>.</li>
+    <li>All exported dates are in <strong>DD/MM/YYYY</strong> format.</li>
+    <li>History export buttons always export <strong>current visible data</strong>.</li>
+  </ul>
+
+  <hr>
+
+  <!-- EMPLOYEE PROFILE -->
+  <h5>7. Employee Profile</h5>
+  <ul>
+    <li>Profile export generates a <strong>multi-sheet Excel file</strong>:</li>
+    <ul>
+      <li>Sheet 1 — Employee details</li>
+      <li>Sheet 2 — Leaves</li>
+      <li>Sheet 3 — Comp-Off</li>
+      <li>Sheet 4 — Early/Late</li>
+      <li>Sheet 5 — Outdoor Duty</li>
+    </ul>
+    <li>Exports contain data for <strong>only that employee</strong>.</li>
+  </ul>
+
+  <hr>
+
+  <!-- ROLES -->
+  <h5>8. User Roles & Permissions</h5>
+  <div class="table-responsive"></div>
+    <table class="table table-sm table-bordered mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>Action</th>
+          <th>Admin</th>
+          <th>Master Admin</th>
+          <th>Developer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Record Leave / Comp-Off / OD</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>Edit Accurals</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>Reset User Password</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <hr>
+
+  <!-- SUPPORT -->
+  <h5>10. When Something Goes Wrong</h5>
+  <ul>
+    <li>Do not retry the same action multiple times.</li>
+    <li>Do not delete records manually.</li>
+    <li>Note the employee ID, date, and action attempted.</li>
+    <li>Contact the Developer with exact details.</li>
+  </ul>
+
+  <div class="alert alert-info mt-3">
+    This system is designed to be strict by default to prevent data corruption.
+    If something is blocked, it is intentional.
+  </div>
+</div>
 {% endblock %}
