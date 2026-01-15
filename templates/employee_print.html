@@ -1,33 +1,93 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center">
-  <h3>{{ e.first_name }} {{ e.last_name }} — {{ e.employee_id }}</h3>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>
+    {{ e.first_name }} {{ e.last_name }} — {{ e.employee_id }}
+  </h3>
   <div>
-    <button class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
-    <a class="btn btn-outline-success" href="{{ url_for('export_employee', emp_code=e.employee_id) }}"><i class="bi bi-download"></i> Export CSV</a>
+    <button class="btn btn-primary" onclick="window.print()">
+      <i class="bi bi-printer"></i> Print
+    </button>
+
+    <!-- FIXED: use bulk export, not removed endpoint -->
+    <a class="btn btn-outline-success"
+       href="{{ url_for('export_employees', format='xlsx') }}">
+      <i class="bi bi-download"></i> Export Employees (Excel)
+    </a>
   </div>
 </div>
 
-<p>Hire date: {{ e.hire_date|nice_date }} | Accrual rate: {{ e.accrual_rate }}</p>
+<p class="text-muted">
+  Hire date: {{ e.hire_date|nice_date }}
+  &nbsp;|&nbsp;
+  Accrual rate: {{ e.accrual_rate }}
+</p>
+
 <h4>Available balance: {{ bal }}</h4>
 
+<hr>
+
 <h5>Leaves</h5>
-<table class="table table-sm"><thead><tr><th>From</th><th>To</th><th>Days</th><th>Type</th><th>Reason</th></tr></thead>
-<tbody>
-{% for l in leaves %}
-<tr><td>{{ l.date_from|nice_date }}</td><td>{{ l.date_to|nice_date }}</td><td>{{ l.days }}</td><td>{{ l.leave_type_id }}</td><td>{{ l.reason }}</td></tr>
-{% else %}
-<tr><td colspan="5" class="text-muted">No leaves recorded</td></tr>
-{% endfor %}
-</tbody></table>
+<div class="table-responsive">
+  <table class="table table-sm table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>From</th>
+        <th>To</th>
+        <th>Days</th>
+        <th>Type</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in leaves %}
+        <tr>
+          <td>{{ l.date_from|nice_date }}</td>
+          <td>{{ l.date_to|nice_date }}</td>
+          <td>{{ l.days }}</td>
+          <td>{{ l.leave_type.name if l.leave_type }}</td>
+          <td>{{ l.reason or '' }}</td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted">
+            No leaves recorded
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<hr>
 
 <h5>Transactions</h5>
-<table class="table table-sm"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead>
-<tbody>
-{% for t in transactions %}
-<tr><td>{{ t.created_at.strftime('%Y-%m-%d %H:%M') }}</td><td>{{ t.type }}</td><td>{{ t.amount }}</td><td>{{ t.note }}</td></tr>
-{% else %}
-<tr><td colspan="4" class="text-muted">No transactions</td></tr>
-{% endfor %}
-</tbody></table>
+<div class="table-responsive">
+  <table class="table table-sm table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in transactions %}
+        <tr>
+          <td>{{ t.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ t.type }}</td>
+          <td>{{ t.amount }}</td>
+          <td>{{ t.note or '' }}</td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="4" class="text-center text-muted">
+            No transactions
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
