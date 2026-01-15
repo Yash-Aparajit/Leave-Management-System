@@ -12,67 +12,95 @@
         <small class="text-muted">({{ e.employee_id }})</small>
       </h4>
       <div class="small text-muted">
-        Status: {{ e.status or 'active' }}
-        {% if e.hire_date %} • Joined {{ e.hire_date|nice_date }}{% endif %}
+        Status: {% if e.status == 'left' %}
+                  <span class="text-danger"><strong>Left</strong></span>
+                  {% if e.left_date %} • Left on {{ e.left_date|nice_date }}{% endif %}
+                {% else %}
+                  <span class="text-success"><strong>Active</strong></span>
+                  {% if e.hire_date %} • Joined {{ e.hire_date|nice_date }}{% endif %}
+                {% endif %}
       </div>
     </div>
 
     <div class="text-end">
       <a class="btn btn-sm btn-outline-primary" href="{{ url_for('employee_print', emp_id=e.id) }}" target="_blank"><i class="bi bi-printer"></i> Print</a>
-      <a class="btn btn-sm btn-outline-success" href="{{ url_for('export_employee', emp_code=e.employee_id) }}"><i class="bi bi-download"></i> Export CSV</a>
-      {% if session.get('role') in ('developer','admin_master') or has_permission('can_edit_employee') %}
+      <a class="btn btn-sm btn-outline-success" href="{{ url_for('export_employee_profile', emp_id=e.id) }}"> <i class="bi bi-download"></i> Export profile (Excel) </a>
+      {% if session.get('role') == 'developer' %}
         <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('edit_employee', emp_id=e.id) }}"><i class="bi bi-pencil"></i> Edit</a>
       {% endif %}
     </div>
   </div>
 
+  {% if e.status == 'left' %}
+    <div class="alert alert-warning mt-3">
+      This employee is marked <strong>Left</strong>. Most actions (recording paid leave, balance changes) are blocked.
+      If this is a mistake you can reactivate the employee (Developer only).
+    </div>
+  {% endif %}
+
   <hr/>
 
   <div class="row mb-3">
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card card-small p-3">
         <div class="small text-muted">Accrual rate</div>
         <div class="h5">{{ e.accrual_rate }} / month</div>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card card-small p-3">
         <div class="small text-muted">Current balance</div>
         <div class="h5">{{ bal }}</div>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card card-small p-3">
         <div class="small text-muted">Promotion date</div>
         <div class="h6">{{ e.promotion_date|nice_date }}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-small p-3">
+        <div class="small text-muted">Plant</div>
+        <div class="h6">{{ e.plant_location or '-' }}</div>
       </div>
     </div>
   </div>
 
   <h5>Profile</h5>
   <div class="row mb-3">
-    <div class="col-md-3">
+    <div class="col-md-4">
       <div><strong>Department</strong></div>
       <div class="text-muted">{{ e.department or '-' }}</div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
       <div><strong>Designation</strong></div>
       <div class="text-muted">{{ e.designation or '-' }}</div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div><strong>Contact</strong></div>
       <div class="text-muted">{{ e.contact_number or '-' }}</div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div><strong>Emergency</strong></div>
       <div class="text-muted">{{ e.emergency_number or '-' }}</div>
     </div>
   </div>
 
+  <div class="d-flex gap-2 mb-3">
+    {% if e.status != 'left' %}
+      <a class="btn btn-lg btn-primary" href="{{ url_for('record_leave') }}"><i class="bi bi-plus-circle"></i> Add leave</a>
+    {% else %}
+      <button class="btn btn-lg btn-secondary" disabled><i class="bi bi-plus-circle"></i> Add leave (disabled — employee left)</button>
+    {% endif %}
+
+    <a class="btn btn-lg btn-outline-secondary" href="{{ url_for('history_home') }}"><i class="bi bi-clock-history"></i> Leaves history</a>
+  </div>
+
   <h5>Recent Leaves</h5>
   {% if leaves %}
     <div class="table-responsive">
-      <table class="table table-sm">
+      <table class="table table-sm w-100">
         <thead class="table-light">
           <tr>
             <th>Date from</th>
@@ -90,11 +118,6 @@
               <td>{{ l.date_from|nice_date }}</td>
               <td>{{ l.date_to|nice_date }}</td>
               <td>{{ l.days }}</td>
-
-              {# Simple, reliable leave-type display:
-                 - If your model has a relationship named `leave_type` that resolves to an object with `name`,
-                   this will show the name.
-                 - Otherwise it will print the numeric `leave_type_id` so the template never crashes. #}
               <td>
                 {% if l.leave_type is defined and l.leave_type %}
                   {{ l.leave_type.name }}
@@ -106,12 +129,14 @@
                   {% endif %}
                 {% endif %}
               </td>
-
               <td>{{ l.approver or '' }}</td>
               <td>{{ l.reason or '' }}</td>
               <td>
-                {% if session.get('role') in ('developer','admin_master') or has_permission('can_edit_employee') %}
-                  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('edit_leave', leave_id=l.id) }}">Edit</a>
+                {% if session.get('role') == 'developer' %}
+                  <a class="btn btn-sm btn-outline-secondary"
+                    href="{{ url_for('edit_leave', leave_id=l.id) }}">
+                    Edit
+                  </a>
                 {% endif %}
               </td>
             </tr>
@@ -138,14 +163,7 @@
               <td>{{ t.type }}</td>
               <td>{{ t.amount }}</td>
               <td>{{ t.note or '' }}</td>
-              <td>
-                {% if t.created_by %}
-                  {# Try to show username if route supplied users_map in future; otherwise show id #}
-                  {{ t.created_by }}
-                {% else %}
-                  System
-                {% endif %}
-              </td>
+              <td>{{ t.created_by or 'System' }}</td>
             </tr>
           {% endfor %}
         </tbody>
