@@ -1,1 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Internal Ledger{% endblock %}
 
+{% block content %}
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3>Internal Ledger</h3>
+      <div class="text-muted small">
+        Developer-only system transactions (read-only)
+      </div>
+    </div>
+    <span class="badge bg-danger">DEV ONLY</span>
+  </div>
+
+  <!-- FILTERS -->
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-md-3">
+      <input name="employee_id" value="{{ filters.employee_id }}"
+             class="form-control" placeholder="Employee ID">
+    </div>
+
+    <div class="col-md-3">
+      <select name="type" class="form-select">
+        <option value="">Transaction Type</option>
+        {% for t in [
+          'ACCRUAL','LEAVE_TAKEN','OVERRIDE','PROMOTION',
+          'PROMOTION_ADJUST','MANUAL_OVERRIDE','ADJUSTMENT','IMPORT'
+        ] %}
+          <option value="{{ t }}" {% if filters.type==t %}selected{% endif %}>
+            {{ t }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <input name="year" value="{{ filters.year }}" class="form-control" placeholder="Year">
+    </div>
+
+    <div class="col-md-2 d-grid">
+      <button class="btn btn-primary">Filter</button>
+    </div>
+  </form>
+
+  <!-- TABLE -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-sm align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Time</th>
+          <th>Employee</th>
+          <th>Type</th>
+          <th>Period</th>
+          <th>Amount</th>
+          <th>Note</th>
+          <th>By</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in items %}
+          {% set emp = emp_map.get(t.employee_id) %}
+          <tr>
+            <td>{{ t.created_at }}</td>
+            <td>
+              {% if emp %}
+                {{ emp.employee_id }} – {{ emp.first_name }} {{ emp.last_name }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge bg-secondary">{{ t.type }}</span>
+            </td>
+            <td>{{ t.period or '' }}</td>
+            <td class="text-end">{{ "%.2f"|format(t.amount or 0) }}</td>
+            <td style="max-width:300px">{{ t.note }}</td>
+            <td>{{ t.created_by }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="7" class="text-center text-muted">No records</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
