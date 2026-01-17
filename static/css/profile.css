@@ -1,0 +1,85 @@
+.profile-page {
+  background: #0b0b12;
+  min-height: 100vh;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+#particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-card {
+  position: relative;
+  z-index: 2;
+  max-width: min(720px, 92vw);
+  margin: auto;
+  padding: clamp(3rem, 6vw, 6rem) 2rem 3rem;
+  text-align: center;
+  animation: fadeUp 1s ease;
+}
+
+
+.avatar svg {
+  width: 110px;
+  margin-bottom: 1rem;
+}
+
+.hero-card h1 span {
+  color: #6b5cff;
+}
+
+.curve path {
+  stroke: #6b5cff;
+  fill: none;
+  stroke-width: 3;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: draw 1.5s ease forwards;
+}
+
+.actions {
+  margin-top: 2rem;
+}
+
+.actions button,
+.actions .back-btn {
+  background: none;
+  border: 1px solid #6b5cff;
+  color: #fff;
+  padding: .6rem 1.2rem;
+  border-radius: 20px;
+  margin: 0 .4rem;
+  text-decoration: none;
+}
+
+.expand-section {
+  max-width: 720px;
+  margin: auto;
+  background: rgba(255,255,255,0.04);
+  padding: 2rem;
+  border-radius: 16px;
+  transform: translateY(-20px);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all .6s ease;
+}
+
+.expand-section.open {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 600px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
