@@ -1,0 +1,128 @@
+{% extends "history_base.html" %}
+{% block title %}Outdoor Duty History{% endblock %}
+
+{% block history_content %}
+
+<form method="get" class="row g-2 align-items-end mb-3">
+
+  <div class="col-md-2">
+    <label class="form-label small">Employee ID</label>
+    <input type="text"
+           name="employee_id"
+           value="{{ filters.employee_id }}"
+           class="form-control form-control-sm"
+           placeholder="EMP001">
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label small">Department</label>
+    <select name="department" class="form-select form-select-sm">
+      <option value="">All</option>
+      {% for d in ['Purchase','ME','HR Admin','Production','Quality','Store','Other'] %}
+        <option value="{{ d }}">{{ d }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label small">Year</label>
+    <input type="number"
+           name="year"
+           class="form-control form-control-sm"
+           placeholder="2025">
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label small">Month</label>
+    <input type="number"
+           min="1"
+           max="12"
+           name="month"
+           class="form-control form-control-sm"
+           placeholder="12">
+  </div>
+
+  <div class="col-md-4 d-flex gap-2">
+    <button class="btn btn-sm btn-primary">
+      <i class="bi bi-funnel"></i> Apply
+    </button>
+
+    <a href="{{ url_for('history_outdoor') }}"
+       class="btn btn-sm btn-outline-secondary">
+      Reset
+    </a>
+
+    <a href="{{ url_for('outdoor_export') }}"
+       class="btn btn-sm btn-outline-success">
+      <i class="bi bi-download"></i> Excel
+    </a>
+  </div>
+</form>
+
+<div class="card card-shadow">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Date</th>
+          <th>EMP ID</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Type</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Reason</th>
+          <th>Approved By</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for od in items %}
+        <tr>
+          <td>{{ od.od_date.strftime('%d/%m/%Y') }}</td>
+          <td>{{ od.emp_code }}</td>
+          <td>{{ od.emp_name }}</td>
+          <td>{{ od.department or '-' }}</td>
+
+          <td>
+            {% if od.is_full_day %}
+              <span class="badge bg-success">Full Day</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Half Day</span>
+            {% endif %}
+          </td>
+
+          <td>
+            {% if not od.is_full_day and od.time_from %}
+              {{ od.time_from.strftime('%H:%M') }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+
+          <td>
+            {% if not od.is_full_day and od.time_to %}
+              {{ od.time_to.strftime('%H:%M') }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+
+          <td>{{ od.reason or '' }}</td>
+          <td>{{ od.approved_by or '-' }}</td>
+          <td class="text-muted">{{ od.note or '' }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="10" class="text-center text-muted py-3">
+            No outdoor duty records found
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
