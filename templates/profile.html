@@ -1,1 +1,200 @@
+{% extends "base.html" %}
+{% set hide_topbar = true %}
+{% block title %}Profile{% endblock %}
+{% block body_class %}profile-page{% endblock %}
 
+{% block head %}
+<style>
+/* ---------------- PROFILE RESET ---------------- */
+.profile-page .topbar,
+.profile-page .footer {
+  display: none;
+}
+
+.profile-page {
+  background: radial-gradient(circle at top, #1b0b3a, #05010d);
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: #eae6ff;
+  font-family: Inter, system-ui;
+}
+
+/* ---------------- LAYOUT ---------------- */
+.profile-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 4rem 1.5rem 6rem;
+  text-align: center;
+  position: relative;
+}
+
+/* ---------------- BACK BUTTON ---------------- */
+.back-btn-profile {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  padding: .45rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid #9b7bff;
+  color: #eae6ff;
+  background: transparent;
+  text-decoration: none;
+  transition: all .25s ease;
+}
+.back-btn-profile:hover {
+  background: #9b7bff;
+  color: #05010d;
+}
+
+/* ---------------- AVATAR ---------------- */
+.avatar-wrap {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 1.2rem;
+  border-radius: 50%;
+  background: #6b5cff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-wrap img {
+  width: 92px;
+  height: 92px;
+}
+
+/* ---------------- TEXT ---------------- */
+.profile-name {
+  font-size: 2.6rem;
+  color: #c9ff7a;
+  margin-bottom: .4rem;
+}
+.profile-sub {
+  color: #9fd3ff;
+  font-size: 1.05rem;
+  margin-bottom: 1.8rem;
+}
+
+/* ---------------- BUTTON ---------------- */
+.show-more-btn {
+  padding: .6rem 1.8rem;
+  border-radius: 999px;
+  border: 1px solid #9b7bff;
+  background: transparent;
+  color: #eae6ff;
+  transition: all .25s ease;
+}
+.show-more-btn:hover {
+  background: #9b7bff;
+  color: #05010d;
+}
+
+/* ---------------- EXPAND SECTION ---------------- */
+.details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .7s ease;
+}
+.details.open {
+  max-height: 2000px;
+}
+
+/* ---------------- SVG CURVES ---------------- */
+.svg-divider {
+  margin: 3rem auto;
+}
+.svg-divider svg {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* ---------------- SKILLS ---------------- */
+.skills {
+  margin-top: 2rem;
+}
+.skill-pill {
+  display: inline-block;
+  margin: .35rem;
+  padding: .45rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid #66e0ff;
+  color: #eae6ff;
+  font-size: .85rem;
+  transition: all .25s ease;
+}
+.skill-pill:hover {
+  background: #66e0ff;
+  color: #05010d;
+  transform: translateY(-2px);
+}
+
+/* ---------------- JOURNEY ---------------- */
+.journey {
+  margin-top: 3rem;
+  color: #cfc9ff;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: .95rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+
+  <!-- Back -->
+  <a href="{{ url_for('index') }}" class="back-btn-profile">← Back</a>
+
+  <!-- Avatar -->
+  <div class="avatar-wrap">
+    <!-- EXACT style avatar (no emoji, no AI junk) -->
+    <img src="{{ url_for('static', filename='profile/avatar.jpg') }}"
+     alt="Yash Avatar"
+     style="width:92px;height:92px;border-radius:50%;">
+  </div>
+
+  <!-- Header -->
+  <div class="profile-name">Yash Aparajit</div>
+  <div class="profile-sub">
+    AI Engineer • Building Automated Systems 
+  </div>
+
+  <button class="show-more-btn" onclick="toggleDetails()">Show more</button>
+
+  <!-- SVG CURVE -->
+  <div class="svg-divider">
+    <svg viewBox="0 0 400 80" fill="none">
+      <path d="M10 40 C 80 10, 160 70, 240 40, 320 10, 390 40"
+            stroke="#9b7bff"
+            stroke-width="2"
+            fill="none"/>
+    </svg>
+  </div>
+
+  <!-- EXPANDABLE CONTENT -->
+  <div id="details" class="details">
+
+    <h4 class="mt-4">Skills</h4>
+    <div class="skills">
+      <span class="skill-pill">Python</span>
+      <span class="skill-pill">Machine Learning</span>
+      <span class="skill-pill">Deep Learning</span>
+      <span class="skill-pill">Automation</span>
+      <span class="skill-pill">NLP</span>
+      <span class="skill-pill">C++</span>
+    </div>
+
+    <div class="journey">
+      I build factory-grade systems that replace Excel, reduce downtime,
+      and give operations teams visibility they never had before.
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleDetails() {
+  document.getElementById("details").classList.toggle("open");
+}
+</script>
+{% endblock %}
