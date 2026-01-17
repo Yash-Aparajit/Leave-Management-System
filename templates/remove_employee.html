@@ -1,17 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}Remove employee{% endblock %}
+{% block title %}Mark employee as left{% endblock %}
 
 {% block content %}
 <a class="btn btn-outline-secondary back-btn" href="{{ url_for('index') }}"><i class="bi bi-arrow-left"></i> Back</a>
 
-<div class="card p-4">
-  <h4>Mark employee as left</h4>
-  <form method="post">
-    <div class="mb-3">
+<div class="card p-4 mt-3">
+  <h4 class="mb-3">Mark employee as left</h4>
+
+  <form method="post" class="row g-3">
+    <div class="col-md-6">
       <label class="form-label">Employee ID</label>
       <input name="employee_id" class="form-control" placeholder="e.g. EMP-001" required>
     </div>
-    <button class="btn btn-warning">Mark as left</button>
+
+    <div class="col-md-6">
+      <label class="form-label">Left date (optional)</label>
+      <input name="left_date" type="date" class="form-control" placeholder="Leave blank to use today">
+      <div class="form-text">If you leave this blank the system will save today's date.</div>
+    </div>
+
+    <div class="col-12">
+      <button class="btn btn-warning">Mark as left</button>
+      <a class="btn btn-outline-secondary ms-2" href="{{ url_for('employees_list') }}">All employees</a>
+    </div>
   </form>
+
+  <div class="mt-3 small text-muted">
+    Marking an employee as <strong>left</strong> will set their status to <code>left</code>. They will remain in the database
+    and appear in exports, but most actions (like recording paid leave) are blocked for employees with status <code>left</code>.
+  </div>
 </div>
 {% endblock %}
