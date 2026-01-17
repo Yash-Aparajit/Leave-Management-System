@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Import preview{% endblock %}
+
+{% block content %}
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('import_employees') }}"><i class="bi bi-arrow-left"></i> Back</a>
+
+<div class="card p-4 mt-3">
+  <h4>Import preview</h4>
+
+  <p>Total rows: {{ total }} • To create: {{ created_count }} • Rejected: {{ rejected_count }}</p>
+
+  {% if created_count %}
+    <h5 class="mt-3">Rows to be created</h5>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead><tr><th>Row</th><th>Employee ID</th><th>Name</th></tr></thead>
+        <tbody>
+          {% for r in to_create[:200] %}
+            <tr>
+              <td>{{ r.row }}</td>
+              <td>{{ r.data.employee_id }}</td>
+              <td>{{ r.data.first_name }}{% if r.data.middle_name %} {{ r.data.middle_name }}{% endif %} {{ r.data.last_name }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  {% if rejected_count %}
+    <h5 class="mt-3 text-danger">Rejected rows (errors)</h5>
+    <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead><tr><th>Row</th><th>Employee ID</th><th>Errors</th></tr></thead>
+        <tbody>
+          {% for r in to_reject[:200] %}
+            <tr>
+              <td>{{ r.row }}</td>
+              <td>{{ r.data.employee_id or '' }}</td>
+              <td>
+                {% for er in r.errors %}
+                  <div class="text-danger small">{{ er }}</div>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('import_employees_confirm') }}">
+    <input type="hidden" name="preview_token" value="{{ preview_token }}">
+    <div class="mt-3">
+      <button class="btn btn-success">Confirm Import (create {{ created_count }} rows)</button>
+      <a class="btn btn-secondary" href="{{ url_for('import_employees') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
