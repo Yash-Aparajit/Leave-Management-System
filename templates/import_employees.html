@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Import employees{% endblock %}
+
+{% block content %}
+<a class="btn btn-outline-secondary back-btn" href="{{ url_for('index') }}"><i class="bi bi-arrow-left"></i> Back</a>
+
+<div class="card p-4 mt-3">
+  <h4>Import employees (Excel .xlsx)</h4>
+
+  <p class="small text-muted">Download the template, fill rows, then upload. The system will validate and show a preview before committing.</p>
+
+  <div class="mb-3">
+    <a class="btn btn-outline-primary" href="{{ url_for('static', filename='employees_import_template.xlsx') }}">Download template (.xlsx)</a>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label class="form-label">Upload .xlsx</label>
+      <input type="file" name="file" accept=".xlsx" class="form-control" required>
+    </div>
+
+    <div class="mb-3 form-text">
+      <strong>Note:</strong> Rows with an employee_id that already exists in the database will be rejected by default.
+    </div>
+
+    <button class="btn btn-primary">Upload & Validate</button>
+  </form>
+
+  <hr>
+  <div class="small text-muted">Uploads and previews are stored temporarily in the uploads folder.</div>
+</div>
+{% endblock %}
