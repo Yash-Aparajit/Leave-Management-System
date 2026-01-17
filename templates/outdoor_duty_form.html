@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Record Outdoor Duty{% endblock %}
+
+{% block content %}
+<a class="btn btn-outline-secondary mb-3" href="{{ url_for('index') }}">
+  ← Back
+</a>
+
+<div class="card">
+  <div class="card-body">
+    <h4 class="mb-3">Record Outdoor Duty (OD)</h4>
+
+    <form method="POST">
+
+      <!-- EMP ID -->
+      <div class="mb-3">
+        <label class="form-label">Employee ID *</label>
+        <input type="text" name="employee_id" class="form-control" required>
+      </div>
+
+      <!-- OD TYPE -->
+      <div class="mb-3">
+        <label class="form-label">OD Type *</label>
+        <div class="d-flex gap-4">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="od_type" value="full" checked>
+            <label class="form-check-label">Full Day</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="od_type" value="half">
+            <label class="form-check-label">Half Day</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- FULL DAY DATE -->
+      <div id="fullDayBlock" class="mb-3">
+        <label class="form-label">OD Date *</label>
+        <input type="date" name="od_date" class="form-control">
+      </div>
+
+      <!-- HALF DAY DATE TIME -->
+      <div id="halfDayBlock" class="row mb-3 d-none">
+        <div class="col-md-6">
+          <label class="form-label">From Date & Time *</label>
+          <input type="datetime-local" name="from_datetime" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">To Date & Time *</label>
+          <input type="datetime-local" name="to_datetime" class="form-control">
+        </div>
+      </div>
+      
+      <!-- NOTES -->
+      <div class="mb-4">
+        <label class="form-label">Additional Notes</label>
+        <textarea name="note" class="form-control" rows="3"></textarea>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="d-flex gap-2">
+        <button class="btn btn-success">Save</button>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  const fullDayBlock = document.getElementById('fullDayBlock');
+  const halfDayBlock = document.getElementById('halfDayBlock');
+
+  document.querySelectorAll('input[name="od_type"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (radio.value === 'full' && radio.checked) {
+        fullDayBlock.classList.remove('d-none');
+        halfDayBlock.classList.add('d-none');
+      }
+      if (radio.value === 'half' && radio.checked) {
+        fullDayBlock.classList.add('d-none');
+        halfDayBlock.classList.remove('d-none');
+      }
+    });
+  });
+</script>
+{% endblock %}
