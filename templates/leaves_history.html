@@ -1,70 +1,143 @@
-{% extends 'base.html' %}
-{% block title %}Leaves History{% endblock %}
+{% extends "history_base.html" %}
+{% block title %}Leave History{% endblock %}
 
-{% block content %}
-<a class='btn btn-outline-secondary back-btn' href='{{ url_for("index") }}'><i class='bi bi-arrow-left'></i> Home</a>
+{% block history_content %}
 
-<div class="card p-3">
-  <h4>Leaves History</h4>
+<!-- FILTERS -->
+<form method="get" class="row g-2 align-items-end mb-3">
 
-  <form class="row g-2 mb-3" method="get">
-    <div class="col-auto">
-      <input type="date" class="form-control form-control-sm" name="from_date" value="{{ filters.from_date or '' }}" placeholder="From">
-    </div>
-    <div class="col-auto">
-      <input type="date" class="form-control form-control-sm" name="to_date" value="{{ filters.to_date or '' }}" placeholder="To">
-    </div>
-    <div class="col-auto">
-      <input name="employee_id" class="form-control form-control-sm" placeholder="Employee ID" value="{{ filters.employee_id or '' }}">
-    </div>
-    <div class="col-auto">
-      <select name="leave_type_id" class="form-select form-select-sm">
-        <option value="">All types</option>
-        {% for lt in leave_types %}
-          <option value="{{ lt.id }}" {% if filters.leave_type_id == lt.id|string %}selected{% endif %}>{{ lt.name }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="col-auto">
-      <select name="department" class="form-select form-select-sm">
-        <option value="">All departments</option>
-        {% for d in departments %}
-          <option value="{{ d }}" {% if filters.department == d %}selected{% endif %}>{{ d }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="col-auto">
-      <button class="btn btn-primary btn-sm">Filter</button>
-    </div>
+  <div class="col-md-2">
+    <label class="form-label small">From Date</label>
+    <input type="date"
+           name="from_date"
+           value="{{ filters.from_date }}"
+           class="form-control form-control-sm">
+  </div>
 
-    <div class="col-auto ms-auto">
-      <a class="btn btn-outline-success btn-sm" href="{{ url_for('export_month_report') }}"><i class="bi bi-download"></i> Export current month</a>
-      <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('export_employees') }}">Export employees</a>
-    </div>
-  </form>
+  <div class="col-md-2">
+    <label class="form-label small">To Date</label>
+    <input type="date"
+           name="to_date"
+           value="{{ filters.to_date }}"
+           class="form-control form-control-sm">
+  </div>
 
+  <div class="col-md-2">
+    <label class="form-label small">Employee ID</label>
+    <input type="text"
+           name="employee_id"
+           value="{{ filters.employee_id }}"
+           class="form-control form-control-sm"
+           placeholder="EMP001">
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label small">Leave Type</label>
+    <select name="leave_type_id" class="form-select form-select-sm">
+      <option value="">All</option>
+      {% for lt in leave_types %}
+        <option value="{{ lt.id }}"
+          {% if filters.leave_type_id == lt.id|string %}selected{% endif %}>
+          {{ lt.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-2">
+    <label class="form-label small">Department</label>
+    <select name="department" class="form-select form-select-sm">
+      <option value="">All</option>
+      {% for d in departments %}
+        <option value="{{ d }}"
+          {% if filters.department == d %}selected{% endif %}>
+          {{ d }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-4 d-flex gap-2">
+    <button class="btn btn-sm btn-primary">
+      <i class="bi bi-funnel"></i> Apply
+    </button>
+
+    <a href="{{ url_for('history_leaves') }}"
+       class="btn btn-sm btn-outline-secondary">
+      Reset
+    </a>
+
+    <a href="{{ url_for('export_history_leaves', **filters) }}"
+       class="btn btn-sm btn-outline-success">
+      <i class="bi bi-download"></i> Excel
+    </a>
+  </div>
+</form>
+
+<!-- TABLE -->
+<div class="card card-shadow">
   <div class="table-responsive">
-    <table class="table table-sm">
+    <table class="table table-sm table-hover mb-0">
       <thead class="table-light">
-        <tr><th>Date From</th><th>Date To</th><th>EMP ID</th><th>Name</th><th>Dept</th><th>Type</th><th>Days</th><th>Approver</th><th>Recorded by</th></tr>
+        <tr>
+          <th>From</th>
+          <th>To</th>
+          <th>EMP ID</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Leave Type</th>
+          <th>Days</th>
+          <th>Approver</th>
+          <th>Recorded By</th>
+          <th>Reason</th>
+        </tr>
       </thead>
+
       <tbody>
         {% for l in leaves %}
           {% set emp = emp_map.get(l.employee_id) %}
           <tr>
-            <td>{{ l.date_from|nice_date }}</td>
-            <td>{{ l.date_to|nice_date }}</td>
-            <td>{{ emp.employee_id if emp else '' }}</td>
-            <td>{{ (emp.first_name + ' ' + (emp.middle_name or '') + ' ' + emp.last_name).strip() if emp else '' }}</td>
-            <td>{{ emp.department if emp else '' }}</td>
-            <td>{{ (l.leave_type.name if l.leave_type is defined and l.leave_type else (leave_types|selectattr("id", "equalto", l.leave_type_id)|map(attribute="name")|first)) or '' }}</td>
+            <td>{{ l.date_from.strftime('%d/%m/%Y') if l.date_from else '' }}</td>
+            <td>{{ l.date_to.strftime('%d/%m/%Y') if l.date_to else '' }}</td>
+
+            <td>{{ emp.employee_id if emp else '-' }}</td>
+
+            <td>
+              {% if emp %}
+                {{ emp.first_name }} {{ emp.last_name }}
+                {% if emp.status == 'left' %}
+                  <span class="badge bg-secondary ms-1">LEFT</span>
+                {% endif %}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+
+            <td>{{ emp.department if emp else '-' }}</td>
+
+            <td>{{ l.leave_type.name if l.leave_type else '-' }}</td>
+
             <td>{{ l.days }}</td>
-            <td>{{ l.approver or '' }}</td>
-            <td>{{ l.created_by or '' }}</td>
+
+            <td>{{ l.approver or '-' }}</td>
+
+            <td>
+              {{ l.Recorded_name or '-'}}
+            </td>
+            
+            <td class="text-muted">{{ l.reason or '' }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="10" class="text-center text-muted py-3">
+              No leave records found
+            </td>
           </tr>
         {% endfor %}
       </tbody>
+
     </table>
   </div>
 </div>
+
 {% endblock %}
