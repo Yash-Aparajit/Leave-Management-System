@@ -5,7 +5,6 @@ from sqlalchemy.sql import func
 
 db = SQLAlchemy()
 
-
 def now():
     return datetime.utcnow()
 
@@ -40,9 +39,9 @@ class Employee(db.Model):
     left_date = db.Column(db.Date, nullable=True)
 
     # Accrual / balances
-    accrual_rate = db.Column(db.Float, nullable=True)           # current accrual rate (e.g. 1.5 or 2.5)
-    initial_accrual_rate = db.Column(db.Float, nullable=True)   # original accrual rate at import/create (helpful for recalcs)
-    manual_balance = db.Column(db.Float, nullable=True)         # optional manual override (audit must be kept in Transaction)
+    accrual_rate = db.Column(db.Float, nullable=True)           
+    initial_accrual_rate = db.Column(db.Float, nullable=True)   
+    manual_balance = db.Column(db.Float, nullable=True)         
 
     status = db.Column(db.String(32), nullable=False, default='active')  # active / left
 
