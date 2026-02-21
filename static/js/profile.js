@@ -1,4 +1,3 @@
-// Slide-down expand
 document.getElementById("showMoreBtn").onclick = () => {
   document.getElementById("expandSection").classList.toggle("open");
 };
