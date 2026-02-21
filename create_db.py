@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash
 from app import app, db
 from models import User, LeaveType
 
+
 SEED_USERS = [
     ("user_1", "password_1", "viewer_user"), #basic user rights
     ("user_master", "password_2", "user_master"), #basic user rights + manual override 
