@@ -116,7 +116,6 @@ def require_permission(permission_name):
 
     return decorator
 
-
 # ---------- session & auth ----------
 @app.before_request
 def validate_session_token():
@@ -146,7 +145,6 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated
-
 
 @app.template_filter("nice_date")
 def nice_date(value):
@@ -353,7 +351,6 @@ def recalc_accruals_for_promotion(emp, old_rate, new_rate, promotion_date):
 
     db.session.commit()
 
-
 def compute_balance(emp):
     """
     Effective leave balance = sum of all transactions for this employee.
@@ -400,6 +397,7 @@ def login():
             return redirect(url_for("index"))
         flash("Invalid credentials", "danger")
     return render_template("login.html")
+
 
 
 @app.route("/logout")
@@ -530,6 +528,7 @@ def help_page():
     )
 
 
+    
 # ---------- Employee listing & search ----------
 @app.route("/employees")
 @login_required
