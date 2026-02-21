@@ -1,16 +1,3 @@
-# init_db.py — safe merged initializer
-"""
-Run: python init_db.py
-
-This script:
-  - Ensures the SQLite DB file exists (app.db in project root)
-  - Calls SQLAlchemy db.create_all() using your models.py
-  - Adds a set of historically-added columns via ALTER TABLE if they're missing
-  - Seeds default users (only if the users table is empty)
-
-Place this file next to app.py and models.py.
-"""
-
 import os
 import sys
 import sqlite3
@@ -27,7 +14,6 @@ from models import (
     EarlyLateRecord,
     OutdoorDuty
 )
-
 
 
 # --- make adjustments if needed ---
